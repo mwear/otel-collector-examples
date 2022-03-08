@@ -1,0 +1,27 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+      grpc:
+  
+  jmx:
+    jar_path: /opt/opentelemetry-jmx-metrics.jar
+    endpoint: kafka:1099
+    target_system: kafka
+    collection_interval: 10s
+    
+exporters:
+  logging:
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp, jmx]
+      processors: [batch]
+      exporters: [logging]
+  telemetry:
+    logs:
+      level: debug

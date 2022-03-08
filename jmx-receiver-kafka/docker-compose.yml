@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  collector:
+    container_name: otel-collector
+    build: 
+      context: ./collector
+    volumes:
+      - ./config:/conf/:rw
+    command: ["--config=/conf/collector.yml"]
+    depends_on:
+      - kafka 
+
+  kafka:
+    container_name: kafka
+    image: johnnypark/kafka-zookeeper:latest
+    ports:
+      - 0.0.0.0:9092:9092
+      - 0.0.0.0:2181:2181
+      - 0.0.0.0:1099:1099
+    environment:
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=1099"
+      JMX_PORT: 1099
